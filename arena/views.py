@@ -11,12 +11,19 @@ from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
+from django.views.generic import CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+from .models import *
+import datetime as dt
 
 
 
 # Create your views here.
+# @login_required(login_url='/accounts/register/')
 def home(request):
-    return render(request, 'index.html')
+    questions = Post.objects.all()
+    return render(request, 'index.html',locals())
 
 def signup(request):
     if request.method == 'POST':
@@ -58,4 +65,23 @@ def activate(request, uidb64, token):
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
     else:
         return HttpResponse('Activation link is invalid!')
+
+
+class PostCreateView(LoginRequiredMixin,CreateView):
+    model = Post
+    fields = ['title','question','author_name']
+    # success_url = '/'
+
+    def form_valid(self,form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+class CommentCreateView(LoginRequiredMixin,CreateView):
+    model = Comment
+    fields = ['user','comment','post']
+
+    def form_valid(self,form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 

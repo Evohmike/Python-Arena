@@ -1,0 +1,18 @@
+{%extends 'base.html'%} 
+{% block content %}
+
+<div class="container" style="padding:5">
+  <div class="content-section">
+    <h2>Answer Question</h2>
+    <form method="POST">
+      {% csrf_token %}
+      <fieldset class="form-group">
+        {{ form }}
+      </fieldset>
+      <div class="form-group">
+        <button class="btn btn-outline-info" type="submit">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
